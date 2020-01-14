@@ -1,64 +1,77 @@
 import React from 'react';
+import TodoForm from './components/TodoComponents/TodoForm'
+import TodoList from './components/TodoComponents/TodoList'
 
-
-
-const todoThings = [
+const newTasks= [
   {
-    name: 'Make A List',
-    id: Math.random(),
-    completed: false,
-    cleared: false
+    task: 'Organize Garage',
+    id: 1528817077286,
+    completed: false
   },
   {
-    name: 'Make A List',
-    id: Math.random(),
-    completed: false,
-    cleared: false
+    task: 'Bake Cookies',
+    id: 1528817084358,
+    completed: false
   }
 ];
 
-console.log(todoThings)
 
 class App extends React.Component {
   // you will need a place to store your state in this component.
   // design `App` to be the parent component of your application.
   // this component is going to take care of state, and any change handlers you need to work with your state
 
-
-
-
   constructor(){
     super();
     this.state = {
-      todoList: todoThings
-     }
+      newTasks:newTasks
     }
+  }
+
+  addTodo = newItemText => {
+
+    const newItem = {
+      task: newItemText,
+      id: Date.now(),
+      completed: false
+    }
+    this.setState({
+      newTasks:[...this.state.newTasks, newItem]
+    })
+  }
+
+  toggleItem= itemId => {
+
+    this.setState({
+      newTasks:this.state.newTasks.map(item=>{
+        if (item.id === itemId){
+          return{
+            ...item,
+            completed: !item.completed
+          }
+        } else {
+          return item
+        }
+      })
+    })
+  }
 
 
-     addItem = (e) => {
-       e.preventDefault()
-       let newObect = {
-        name: e,
-        id: Math.random(),
-        completed: false,
-        cleared: false
-      }
-        return {...this.state, newObect}
-      }
+  clearComplete = () =>{
+    const completedFilter = this.state.newTasks.filter(
+      tasks => tasks.completed === false
+    )
+    this.setState({newTasks:completedFilter})
+  }
 
   render() {
-    const getDone = this.state.todoList.map(item=>{return item.name});
-    console.log(getDone)
-
- 
-
     return (
       <div>
-        <form onSubmit={this.addItem}>
-        <input placeholder='input text here'/>
-        </form>
         <h2>Welcome to your Todo App!</h2>
-        <p>{getDone}</p>
+        <TodoForm addTodo={this.addTodo}/>
+      <TodoList toggleItem={this.toggleItem} newTasks={this.state.newTasks}/>
+      <button onClick={this.clearComplete}>
+                Clear</button>
       </div>
     );
   }
